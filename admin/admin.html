@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nelly Tech - Painel Administrativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./admin.css">
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>🔐 Login Admin</h1>
+                <p>Nelly Tech - Painel Administrativo</p>
+            </div>
+            
+            <div id="loginAlert" class="alert" style="display: none;"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" required autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                            <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span id="loginButtonText">Entrar</span>
+                </button>
+            </form>
+            
+            <div class="login-info">
+                <p>
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Primeira vez?</strong><br>
+                    Configure sua conta no Firebase Authentication<br>
+                    Email: <strong>nellytechweb@gmail.com</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard" style="display: none;">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>NELLY TECH</h2>
+                <p>Painel Administrativo</p>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="menu-item active" data-section="overview">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="menu-item" data-section="orcamentos">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Orçamentos</span>
+                        <span class="badge badge-danger" id="novosOrcamentosBadge" style="display: none;">0</span>
+                    </li>
+                    <li class="menu-item" data-section="projects">
+                        <i class="fas fa-folder"></i>
+                        <span>Portfólio</span>
+                    </li>
+                    <li class="menu-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Configurações</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-block" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            <!-- TOP BAR -->
+            <header class="top-bar">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">Dashboard Administrativo</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userEmail">Carregando...</span>
+                </div>
+            </header>
+
+            <!-- SEÇÃO: DASHBOARD OVERVIEW -->
+            <section class="content-section active" id="overviewSection">
+                <div class="stats-grid">
+                    <div class="stat-card stat-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalOrcamentos">0</h3>
+                            <p>Total de Orçamentos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="novosOrcamentosCount">0</h3>
+                            <p>Novos Orçamentos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-info">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="emAndamentoCount">0</h3>
+                            <p>Em Andamento</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="concluidosCount">0</h3>
+                            <p>Concluídos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card stat-portfolio">
+                        <div class="stat-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalPortfolio">0</h3>
+                            <p>Projetos no Portfólio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-line"></i> Atividades Recentes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="atividadesRecentes">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando atividades...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: ORÇAMENTOS -->
+            <section class="content-section" id="orcamentosSection">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-file-invoice"></i> Gerenciar Orçamentos</h2>
+                        <div class="card-actions">
+                            <div class="filter-group">
+                                <label for="filterStatus">Filtrar por status:</label>
+                                <select id="filterStatus" class="filter-select">
+                                    <option value="">Todos</option>
+                                    <option value="Novo">🆕 Novo</option>
+                                    <option value="Em Análise">🔍 Em Análise</option>
+                                    <option value="Orçamento Enviado">💰 Orçamento Enviado</option>
+                                    <option value="Aprovado">✅ Aprovado</option>
+                                    <option value="Em Andamento">🚀 Em Andamento</option>
+                                    <option value="Em Revisão">👀 Em Revisão</option>
+                                    <option value="Entregue">📦 Entregue</option>
+                                    <option value="Concluído">✔️ Concluído</option>
+                                    <option value="Cancelado">❌ Cancelado</option>
+                                </select>
+                            </div>
+                            
+                            <div class="search-group">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchOrcamentos" placeholder="Buscar por nome ou serviço...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div id="orcamentosTable">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando orçamentos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: PORTFÓLIO -->
+            <section class="content-section" id="projectsSection">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-folder"></i> Gerenciar Portfólio</h2>
+                        <button class="btn btn-success" onclick="openProjectModal()">
+                            <i class="fas fa-plus"></i> Novo Projeto
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div id="projectsTable">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando projetos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: CONFIGURAÇÕES -->
+            <section class="content-section" id="settingsSection">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cog"></i> Configurações do Sistema</h2>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="settings-section">
+                            <h3><i class="fas fa-info-circle"></i> Informações do Sistema</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Email logado:</label>
+                                    <span id="settingsEmail">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Firebase Status:</label>
+                                    <span id="firebaseStatus" class="status-badge">Verificando...</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Versão:</label>
+                                    <span>1.0.0</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Última atualização:</label>
+                                    <span>Outubro 2025</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h3><i class="fas fa-database"></i> Collections do Firebase</h3>
+                            <ul class="collection-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>orcamentos</strong> - Solicitações de orçamento</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>projects</strong> - Portfólio de projetos</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h3><i class="fas fa-palette"></i> Personalização</h3>
+                            <div class="theme-selector">
+                                <button class="btn btn-secondary" onclick="alert('Recurso em desenvolvimento')">
+                                    <i class="fas fa-moon"></i> Modo Escuro (Ativo)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: DETALHES DO ORÇAMENTO -->
+    <div class="modal" id="orcamentoModal">
+        <div class="modal-overlay" onclick="closeOrcamentoModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-invoice"></i> Detalhes do Orçamento</h2>
+                <button class="close-modal" onclick="closeOrcamentoModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <input type="hidden" id="orcamentoModalId">
+                
+                <div id="detalhesOrcamento">
+                    <!-- Conteúdo preenchido via JavaScript -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="novoStatusOrcamento">
+                        <i class="fas fa-sync-alt"></i> Atualizar Status
+                    </label>
+                    <select id="novoStatusOrcamento" class="form-control">
+                        <option value="Novo">🆕 Novo</option>
+                        <option value="Em Análise">🔍 Em Análise</option>
+                        <option value="Orçamento Enviado">💰 Orçamento Enviado</option>
+                        <option value="Aprovado">✅ Aprovado</option>
+                        <option value="Em Andamento">🚀 Em Andamento</option>
+                        <option value="Em Revisão">👀 Em Revisão</option>
+                        <option value="Entregue">📦 Entregue</option>
+                        <option value="Concluído">✔️ Concluído</option>
+                        <option value="Cancelado">❌ Cancelado</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notasInternas">
+                        <i class="fas fa-sticky-note"></i> Notas Internas
+                    </label>
+                    <textarea id="notasInternas" class="form-control" rows="3" placeholder="Adicione observações sobre este orçamento..."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button onclick="updateOrcamentoStatus()" class="btn btn-success">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+                <button onclick="closeOrcamentoModal()" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PROJETO -->
+    <div class="modal" id="projectModal">
+        <div class="modal-overlay" onclick="closeProjectModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-folder-plus"></i> Novo Projeto</h2>
+                <button class="close-modal" onclick="closeProjectModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="modalAlert" class="alert" style="display: none;"></div>
+                
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+                    
+                    <div class="form-group">
+                        <label for="projectName">Nome do Projeto *</label>
+                        <input type="text" id="projectName" class="form-control" required placeholder="Ex: Site Institucional da Empresa X">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectCategory">Categoria *</label>
+                        <select id="projectCategory" class="form-control" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Design UI/UX">Design UI/UX</option>
+                            <option value="Landing Page">Landing Page</option>
+                            <option value="Site Institucional">Site Institucional</option>
+                            <option value="Aplicação Web">Aplicação Web</option>
+                            <option value="Automação IA">Automação IA</option>
+                            <option value="Apresentação">Apresentação</option>
+                            <option value="Social Media">Social Media</option>
+                            <option value="SaaS">SaaS</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectDescription">Descrição</label>
+                        <textarea id="projectDescription" class="form-control" rows="3" placeholder="Breve descrição do projeto e tecnologias utilizadas"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectStatus">Status *</label>
+                        <select id="projectStatus" class="form-control" required>
+                            <option value="progress">Em Andamento</option>
+                            <option value="completed">Concluído</option>
+                            <option value="cancelled">Cancelado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Emoji do Projeto</label>
+                        <input type="text" id="projectEmoji" class="form-control" placeholder="Ex: 🚀" maxlength="2">
+                        <small>Deixe em branco para usar emoji padrão baseado na categoria</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectImage">Imagem do Projeto</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="projectImage" accept="image/*" onchange="previewImage(event)">
+                            <label for="projectImage" class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i> Clique para fazer upload da imagem
+                            </label>
+                        </div>
+                        <img id="imagePreview" class="image-preview" style="display: none;">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="submit" form="projectForm" class="btn btn-success">
+                    <i class="fas fa-save"></i>
+                    <span id="saveButtonText">Salvar Projeto</span>
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./admin.js"></script>
+</body>
+</html>
+
+/* certo ja tenho uma conta no EmailJS
+
+criei quendo estava fazendo um teste em um site de agendamento online, eu tenho a Chave Privada e Chave Publica, uso a mesma ou tem que criar outra ? */
